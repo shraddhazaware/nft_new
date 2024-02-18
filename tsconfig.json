@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -13,9 +14,13 @@
     "jsx": "preserve",
     "incremental": true,
     "paths": {
+      "@_types/*":["types/*"],
+      "@providers":["/components/provider"],
+      "@providers":["/components/provider/*"],
+
       "@/*": ["./*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
 }
