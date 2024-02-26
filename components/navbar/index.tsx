@@ -3,7 +3,7 @@ import { Disclosure, Menu } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import  ActiveLink  from '../link';
 import { useWeb3 } from '../provider/web3';
-import { useAccount, useNetwork } from '../hooks';
+import { useAccount, useNetwork } from '../hooks/web3';
 import Walletbar from './Walletbar';
 
 
@@ -20,7 +20,6 @@ export default function Navbar() {
   const{account}=useAccount();
   const{network}=useNetwork();
 
-  console.log(network.data)
 
   return (
     <Disclosure as="nav" className="bg-gray-800">
@@ -78,9 +77,12 @@ export default function Navbar() {
                     <svg className="-ml-0.5 mr-1.5 h-2 w-2 text-indigo-400" fill="currentColor" viewBox="0 0 8 8">
                       <circle cx={4} cy={4} r={3} />
                     </svg>
-                    {network.data} ---
-                      {`Is supported :${network.isSupported}`} ---
-                      Target:{network.targetNetwork}
+                    {network.isLoading ?
+                    "Loading...":
+                    account.isInstalled ?
+                    network.data:
+                  "Install MetaMask"
+                }
                   </span>
                 </div>
 

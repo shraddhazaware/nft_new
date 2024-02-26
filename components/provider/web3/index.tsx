@@ -5,12 +5,30 @@ import { createDefaultState, createWeb3State, loadContract, Web3State } from "./
 import {ethers} from "ethers";
 import { setupHooks } from "@/components/hooks/web3/setupHooks";
 import { isWindowDefined } from "swr/_internal";
+import { NftMarketContract } from "@_types/nftMarketContract";
 
 interface Web3ProviderProps {
     children: ReactNode; 
 }
 
+const pageReload = ()=> {
+    window.location.reload();
+}
+const handleAccount=(ethereum:MetaMaskInpageProvider) =>async()=>{
+    const isLocked =! (await ethereum._metamask.isUnlocked());
+    if(isLocked){pageReload();}
 
+}
+
+const setGlobalListeners=(ethereum:MetaMaskInpageProvider) => {
+    ethereum.on("chainChnaged",pageReload)
+    ethereum.on("accountChnages",handleAccount(ethereum))
+ }
+ const removeGlobalListeners=(ethereum:MetaMaskInpageProvider)=>{
+     ethereum?.removeListener("chainChanged",pageReload)
+     ethereum?.removeListener("accountChnages",handleAccount)
+
+ }
 const Web3Context = createContext<Web3State>(createDefaultState());
 
 const Web3Provider: FunctionComponent<Web3ProviderProps> = ({ children }) => {
@@ -25,10 +43,17 @@ const Web3Provider: FunctionComponent<Web3ProviderProps> = ({ children }) => {
             try{
                 const provider = new ethers.providers.Web3Provider(window.ethereum as any);
                 const contract =await loadContract ("NftMarket",provider);
+                
+               const signer = provider.getSigner();
+               const signedContract = contract.connect(signer);
+                
+               
+                setTimeout(() =>setGlobalListeners(window.ethereum),500)
+
                 setWeb3Api(createWeb3State({
                     ethereum:window.ethereum,
                     provider,
-                    contract,
+                    contract: signedContract as unknown as NftMarketContract,
                     isLoading:false
     
                 }))
@@ -41,21 +66,13 @@ const Web3Provider: FunctionComponent<Web3ProviderProps> = ({ children }) => {
                 }))
 
             }
-
-            const provider = new ethers.providers.Web3Provider(window.ethereum as any);
-            const contract =await loadContract ("NftMarket",provider);
-            setWeb3Api(createWeb3State({
-                ethereum:window.ethereum,
-                provider,
-                contract,
-                isLoading:false
-
-            }))
         }
         
         
         initWeb3();
+        return() => removeGlobalListeners(window.ethereum)
     }, []);
+
 
     return (
         <Web3Context.Provider value={web3Api}>

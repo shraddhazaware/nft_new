@@ -1,13 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 
 import type { NextPage } from 'next';
-import { BaseLayout, NftList } from '../components'; // Import BaseLayout with curly braces
-import nfts from "../content/meta.json";
-import { NftMeta } from '@_types/nft';
-import { useWeb3 } from 'components/provider/web3';
+import { BaseLayout, NftList } from '../components'; 
+import { useListedNfts } from '@/components/hooks/web3';
 
 const Home: NextPage = () => {
-  const { provider,contract } = useWeb3();
+  const {nfts} = useListedNfts();
   
  
   return (
@@ -24,9 +22,7 @@ const Home: NextPage = () => {
             </p>
           </div>
 
-          <NftList
-            nfts={nfts as NftMeta[]}
-          />
+          <NftList/>
 
         </div>
       </div>

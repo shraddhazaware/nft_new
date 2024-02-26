@@ -20,10 +20,11 @@ export type Cryptoswrresponse<D> = SWRResponse<D>;
 import { MetaMaskInpageProvider } from "@metamask/providers";
 import { Contract, providers } from "ethers";
 import { SWRResponse } from "swr";
+import { NftMarketContract } from "./nftMarketContract";
 
 export type Web3Dependencies ={
     provider:providers.Web3Provider;
-    contract:Contract;
+    contract:NftMarketContract;
     ethereum:MetaMaskInpageProvider;
     isLoading:boolean;
 }
